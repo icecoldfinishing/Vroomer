@@ -1,2 +1,2 @@
-# Ignore framework directory
-framework/
+/project/target/
+/project/build/

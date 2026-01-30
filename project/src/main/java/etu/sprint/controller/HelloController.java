@@ -15,4 +15,12 @@ public class HelloController {
         mv.setView("/views/hello.jsp");
         return mv;
     }
+
+    @GetMapping("/about")
+    public ModelView about() {
+        ModelView mv = new ModelView();
+        mv.addItem("message", "About page");
+        mv.setView("/views/about.jsp");
+        return mv;
+    }
 }

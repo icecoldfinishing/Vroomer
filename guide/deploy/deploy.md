@@ -1,4 +1,5 @@
 # Déploiement du projet sur Render
+mvn -q -DskipTests clean package
 
 Ce guide explique comment déployer ce projet Java (WAR) sur [Render](https://render.com), un service cloud PaaS qui supporte le déploiement d'applications web Java via Tomcat.
 

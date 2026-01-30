@@ -5,5 +5,6 @@
 </head>
 <body>
 	<h1>${message}</h1>
+	<p><a href="/about">Aller à la page de test</a></p>
 </body>
 </html>

@@ -6,45 +6,6 @@ Structure du dossier pour le volume D
 Le numéro de série du volume est C255-923D
 vroomer
 ├───bd
-├───framework
-│   ├───build
-│   │   └───framework-classes
-│   │       ├───connexion
-│   │       └───etu
-│   │           └───sprint
-│   │               ├───annotation
-│   │               ├───handler
-│   │               ├───model
-│   │               ├───util
-│   │               └───web
-│   ├───src
-│   │   └───main
-│   │       └───java
-│   │           └───etu
-│   │               └───sprint
-│   │                   ├───annotation
-│   │                   ├───connexion
-│   │                   ├───handler
-│   │                   ├───model
-│   │                   ├───util
-│   │                   └───web
-│   └───target
-│       ├───classes
-│       │   ├───connexion
-│       │   └───etu
-│       │       └───sprint
-│       │           ├───annotation
-│       │           ├───handler
-│       │           ├───model
-│       │           ├───util
-│       │           └───web
-│       ├───generated-sources
-│       │   └───annotations
-│       ├───maven-archiver
-│       └───maven-status
-│           └───maven-compiler-plugin
-│               └───compile
-│                   └───default-compile
 ├───guide
 │   ├───deploy
 │   ├───sprint

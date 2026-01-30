@@ -12,5 +12,9 @@ RUN mvn -q -DskipTests -f ./pom.xml clean package
 FROM tomcat:10.1-jdk17
 # Deploy the generated WAR as ROOT
 COPY project/target/test-project.war /usr/local/tomcat/webapps/ROOT.war
-EXPOSE 8080
-# Tomcat runs by default on 8080; Render maps $PORT automatically in Docker runtime
+
+# Change Tomcat port to 8888
+ENV CATALINA_OPTS="-Dserver.port=8888"
+RUN sed -i 's/port="8080"/port="8888"/g' /usr/local/tomcat/conf/server.xml
+EXPOSE 8888
+# Tomcat runs on 8888; Render maps $PORT automatically in Docker runtime

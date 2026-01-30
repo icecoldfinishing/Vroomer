@@ -21,60 +21,23 @@ Ce guide explique comment déployer ce projet Java (WAR) sur [Render](https://re
    - Si vous préférez le JAR (via `framework/script.bat`), placez le fichier généré dans `src/main/webapp/WEB-INF/lib/` avant le packaging.
 
 ## 3. Créer un service Web sur Render
-Option A — Docker (recommandé)
-1. Ajoutez un `Dockerfile` dans `project/` (exemple plus bas).
-2. Ajoutez un fichier `render.yaml` à la racine pour un déploiement en un clic.
-3. Sur Render, créez un nouveau service via "Deploy from Blueprint" et sélectionnez `render.yaml`.
+Option (100% gratuite) — Web Service Native
+1. Placez deux scripts à la racine du repo:
+  - `render-build.sh` (build Maven)
+  - `render-start.sh` (démarrage Tomcat sur `$PORT`)
+2. Créez un nouveau "Web Service" sur Render à partir du repo GitHub.
+3. Configurez:
+  - **Root Directory**: `.` (racine du repo)
+  - **Build Command**: `./render-build.sh`
+  - **Start Command**: `./render-start.sh`
+  - **Environment**: Java (17)
+  - **Environment Variables** (si DB): `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`
+4. Déployez. Render exécutera le build, téléchargera Tomcat, et lancera l'app sur le port public.
 
-Option B — Native (avancé)
-- Utilisez un script bash pour télécharger Tomcat, définir le port `$PORT` et lancer `catalina.sh run`. Render ne fournit pas Tomcat nativement; cette option demande plus de maintenance.
+Note: Nous n'utilisons pas Docker ni render.yaml pour éviter le compte payant.
 
-## 4. Exemple de Dockerfile (optionnel)
-Si vous souhaitez un contrôle total, ajoutez un fichier `Dockerfile` dans `project/` :
-
-```dockerfile
-FROM tomcat:10.1-jdk17
-COPY target/test-project.war /usr/local/tomcat/webapps/ROOT.war
-```
-
-Sur Render :
-- **Environment** : Docker
-- **Root Directory** : `project`
-
-Blueprint `render.yaml` (à la racine du repo) :
-
-```yaml
-services:
-  - type: web
-    name: vroomer
-    runtime: docker
-    envVars:
-      - key: SPRING_DATASOURCE_URL
-        value: jdbc:postgresql://your-host:5432/pg10
-      - key: SPRING_DATASOURCE_USERNAME
-        value: postgres
-      - key: SPRING_DATASOURCE_PASSWORD
-        value: postgres
-    rootDir: project
-    dockerfilePath: Dockerfile
-```
-
-  ## 4.1. Tests locaux Docker (recommandés)
-  Avant Render, validez en local:
-
-  ```sh
-  # Option A: depuis le dossier project
-  cd project
-  mvn clean package
-  docker build -t vroomer-tomcat .
-  docker run --rm -p 8080:8080 vroomer-tomcat
-  # Ouvrir http://localhost:8080/
-
-  # Option B: depuis la racine (si vous utilisez le Dockerfile racine)
-  cd ..  # revenir à la racine si besoin
-  docker build -t vroomer-tomcat .
-  docker run --rm -p 8080:8080 vroomer-tomcat
-  ```
+  ## 4.1. Tests locaux (optionnels)
+  Vous pouvez toujours tester avec un Tomcat local en déposant `project/target/test-project.war` dans `webapps`.
 
 ## 5. Limitations et conseils
 - Render n'exécute pas les scripts `.bat` Windows. Tout build doit être automatisé via Maven.
@@ -90,6 +53,5 @@ services:
 
 **Résumé** :
 - Privilégiez un build Maven standard (`mvn package`)
-- Déploiement recommandé: Docker avec `Dockerfile` + `render.yaml`
-- Alternativement, script natif pour Tomcat (avancé)
+ - Déploiement gratuit recommandé: Web Service Render + scripts bash
 - Vérifiez l'URL publique fournie par Render

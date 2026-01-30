@@ -2,3 +2,7 @@
 /project/build/
 
 # Ignore specific .bat scripts
+/framework/script.bat
+/project/script.bat
+
+/framework

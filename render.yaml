@@ -2,7 +2,7 @@ services:
   - type: web
     name: vroomer
     runtime: docker
-    rootDir: project
+    rootDir: .
     dockerfilePath: Dockerfile
     envVars:
       - key: SPRING_DATASOURCE_URL

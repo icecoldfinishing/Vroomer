@@ -16,6 +16,9 @@ Ce guide explique comment déployer ce projet Java (WAR) sur [Render](https://re
   ```
   Le fichier `target/test-project.war` doit être généré.
 - Assurez-vous que le dossier `src/main/webapp/WEB-INF/lib/` contient bien `framework.jar` (généré par le script du framework).
+ - Packaging du framework:
+   - Avec la configuration actuelle Maven, les classes du framework sont directement compilées et incluses dans `WEB-INF/classes` (pas de `framework.jar` requis).
+   - Si vous préférez le JAR (via `framework/script.bat`), placez le fichier généré dans `src/main/webapp/WEB-INF/lib/` avant le packaging.
 
 ## 3. Créer un service Web sur Render
 Option A — Docker (recommandé)
@@ -55,6 +58,23 @@ services:
     rootDir: project
     dockerfilePath: Dockerfile
 ```
+
+  ## 4.1. Tests locaux Docker (recommandés)
+  Avant Render, validez en local:
+
+  ```sh
+  # Option A: depuis le dossier project
+  cd project
+  mvn clean package
+  docker build -t vroomer-tomcat .
+  docker run --rm -p 8080:8080 vroomer-tomcat
+  # Ouvrir http://localhost:8080/
+
+  # Option B: depuis la racine (si vous utilisez le Dockerfile racine)
+  cd ..  # revenir à la racine si besoin
+  docker build -t vroomer-tomcat .
+  docker run --rm -p 8080:8080 vroomer-tomcat
+  ```
 
 ## 5. Limitations et conseils
 - Render n'exécute pas les scripts `.bat` Windows. Tout build doit être automatisé via Maven.

@@ -8,7 +8,7 @@ import etu.sprint.model.ModelView;
 @AnnotationController("/")
 public class HelloController {
 
-    @GetMapping("/")
+    @GetMapping("/hello")
     public ModelView hello() {
         ModelView mv = new ModelView();
         mv.addItem("message", "Hello World!");

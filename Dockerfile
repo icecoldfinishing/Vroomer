@@ -4,16 +4,10 @@
 FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /build
 
-# Copier tout le projet nécessaire pour Maven
-COPY project ./project
+# Copier tout le repo (project + parent POM si tu en as)
+COPY . .
 
-# Aller dans le dossier project
-WORKDIR /build/project
-
-# Télécharger toutes les dépendances
-RUN mvn dependency:go-offline
-
-# Build le projet (skip tests pour accélérer)
+# Build tout le projet multi-module
 RUN mvn clean package -DskipTests
 
 # -----------------------------
@@ -22,7 +16,7 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 
-# Copier le jar généré
+# Copier le jar généré du module project
 COPY --from=build /build/project/target/*.jar app.jar
 
 # Exposer le port Render (il fournit $PORT)

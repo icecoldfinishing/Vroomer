@@ -18,23 +18,13 @@ Ce guide explique comment déployer ce projet Java (WAR) sur [Render](https://re
 - Assurez-vous que le dossier `src/main/webapp/WEB-INF/lib/` contient bien `framework.jar` (généré par le script du framework).
 
 ## 3. Créer un service Web sur Render
-1. Connectez-vous à Render et cliquez sur "New Web Service".
-2. Connectez votre repo GitHub.
-3. Configurez :
-   - **Environment** : Java
-   - **Build Command** : `cd project && mvn clean package`
-   - **Start Command** : `java -jar $JAVA_HOME/lib/tomcat-embed-core.jar --war-file target/test-project.war` *(voir remarque ci-dessous)*
-   - **Environment Variables** :
-     - `JAVA_VERSION=17`
-   - **Root Directory** : `project`
+Option A — Docker (recommandé)
+1. Ajoutez un `Dockerfile` dans `project/` (exemple plus bas).
+2. Ajoutez un fichier `render.yaml` à la racine pour un déploiement en un clic.
+3. Sur Render, créez un nouveau service via "Deploy from Blueprint" et sélectionnez `render.yaml`.
 
-### Remarque importante
-Render ne propose pas Tomcat "standalone" par défaut. Deux options :
-- **Option 1 (recommandée)** :
-  - Ajoutez la dépendance `org.apache.tomcat.embed:tomcat-embed-core` dans le `pom.xml` pour générer un JAR exécutable (Spring Boot style) ou utilisez un plugin Maven pour "packager" Tomcat avec votre WAR.
-  - Modifiez le `Start Command` pour lancer Tomcat embarqué.
-- **Option 2 (classique)** :
-  - Utilisez un Dockerfile personnalisé (voir ci-dessous).
+Option B — Native (avancé)
+- Utilisez un script bash pour télécharger Tomcat, définir le port `$PORT` et lancer `catalina.sh run`. Render ne fournit pas Tomcat nativement; cette option demande plus de maintenance.
 
 ## 4. Exemple de Dockerfile (optionnel)
 Si vous souhaitez un contrôle total, ajoutez un fichier `Dockerfile` dans `project/` :
@@ -47,6 +37,24 @@ COPY target/test-project.war /usr/local/tomcat/webapps/ROOT.war
 Sur Render :
 - **Environment** : Docker
 - **Root Directory** : `project`
+
+Blueprint `render.yaml` (à la racine du repo) :
+
+```yaml
+services:
+  - type: web
+    name: vroomer
+    runtime: docker
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://your-host:5432/pg10
+      - key: SPRING_DATASOURCE_USERNAME
+        value: postgres
+      - key: SPRING_DATASOURCE_PASSWORD
+        value: postgres
+    rootDir: project
+    dockerfilePath: Dockerfile
+```
 
 ## 5. Limitations et conseils
 - Render n'exécute pas les scripts `.bat` Windows. Tout build doit être automatisé via Maven.
@@ -62,6 +70,6 @@ Sur Render :
 
 **Résumé** :
 - Privilégiez un build Maven standard (`mvn package`)
-- Si besoin, adaptez le projet pour Tomcat embarqué ou Docker
-- Déployez le WAR sur Render via l'interface ou Docker
+- Déploiement recommandé: Docker avec `Dockerfile` + `render.yaml`
+- Alternativement, script natif pour Tomcat (avancé)
 - Vérifiez l'URL publique fournie par Render

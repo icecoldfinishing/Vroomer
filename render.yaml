@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: vroomer
+    runtime: docker
+    rootDir: project
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://your-host:5432/pg10
+      - key: SPRING_DATASOURCE_USERNAME
+        value: postgres
+      - key: SPRING_DATASOURCE_PASSWORD
+        value: postgres

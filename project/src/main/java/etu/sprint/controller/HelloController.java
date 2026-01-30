@@ -12,7 +12,7 @@ public class HelloController {
     public ModelView hello() {
         ModelView mv = new ModelView();
         mv.addItem("message", "Hello World!");
-        mv.setView("/views/hello.jsp");
+        mv.setView("views/hello.jsp");
         return mv;
     }
 }

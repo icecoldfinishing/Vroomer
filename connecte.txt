@@ -1,0 +1,1 @@
+psql "postgresql://vroomer_user:cSwHmqViVLWQywaHT6WmEnCvoph3IHZj@dpg-d5u92fd6ubrc73d512tg-a.frankfurt-postgres.render.com:5432/vroomer?sslmode=require"

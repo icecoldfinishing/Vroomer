@@ -16,37 +16,28 @@ Ce guide explique comment déployer ce projet Java (WAR) sur [Render](https://re
   ```
   Le fichier `target/test-project.war` doit être généré.
 - Assurez-vous que le dossier `src/main/webapp/WEB-INF/lib/` contient bien `framework.jar` (généré par le script du framework).
+ - Packaging du framework:
+   - Avec la configuration actuelle Maven, les classes du framework sont directement compilées et incluses dans `WEB-INF/classes` (pas de `framework.jar` requis).
+   - Si vous préférez le JAR (via `framework/script.bat`), placez le fichier généré dans `src/main/webapp/WEB-INF/lib/` avant le packaging.
 
 ## 3. Créer un service Web sur Render
-1. Connectez-vous à Render et cliquez sur "New Web Service".
-2. Connectez votre repo GitHub.
-3. Configurez :
-   - **Environment** : Java
-   - **Build Command** : `cd project && mvn clean package`
-   - **Start Command** : `java -jar $JAVA_HOME/lib/tomcat-embed-core.jar --war-file target/test-project.war` *(voir remarque ci-dessous)*
-   - **Environment Variables** :
-     - `JAVA_VERSION=17`
-   - **Root Directory** : `project`
+Option (100% gratuite) — Web Service Native
+1. Placez deux scripts à la racine du repo:
+  - `render-build.sh` (build Maven)
+  - `render-start.sh` (démarrage Tomcat sur `$PORT`)
+2. Créez un nouveau "Web Service" sur Render à partir du repo GitHub.
+3. Configurez:
+  - **Root Directory**: `.` (racine du repo)
+  - **Build Command**: `./render-build.sh`
+  - **Start Command**: `./render-start.sh`
+  - **Environment**: Java (17)
+  - **Environment Variables** (si DB): `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`
+4. Déployez. Render exécutera le build, téléchargera Tomcat, et lancera l'app sur le port public.
 
-### Remarque importante
-Render ne propose pas Tomcat "standalone" par défaut. Deux options :
-- **Option 1 (recommandée)** :
-  - Ajoutez la dépendance `org.apache.tomcat.embed:tomcat-embed-core` dans le `pom.xml` pour générer un JAR exécutable (Spring Boot style) ou utilisez un plugin Maven pour "packager" Tomcat avec votre WAR.
-  - Modifiez le `Start Command` pour lancer Tomcat embarqué.
-- **Option 2 (classique)** :
-  - Utilisez un Dockerfile personnalisé (voir ci-dessous).
+Note: Nous n'utilisons pas Docker ni render.yaml pour éviter le compte payant.
 
-## 4. Exemple de Dockerfile (optionnel)
-Si vous souhaitez un contrôle total, ajoutez un fichier `Dockerfile` dans `project/` :
-
-```dockerfile
-FROM tomcat:10.1-jdk17
-COPY target/test-project.war /usr/local/tomcat/webapps/ROOT.war
-```
-
-Sur Render :
-- **Environment** : Docker
-- **Root Directory** : `project`
+  ## 4.1. Tests locaux (optionnels)
+  Vous pouvez toujours tester avec un Tomcat local en déposant `project/target/test-project.war` dans `webapps`.
 
 ## 5. Limitations et conseils
 - Render n'exécute pas les scripts `.bat` Windows. Tout build doit être automatisé via Maven.
@@ -62,6 +53,5 @@ Sur Render :
 
 **Résumé** :
 - Privilégiez un build Maven standard (`mvn package`)
-- Si besoin, adaptez le projet pour Tomcat embarqué ou Docker
-- Déployez le WAR sur Render via l'interface ou Docker
+ - Déploiement gratuit recommandé: Web Service Render + scripts bash
 - Vérifiez l'URL publique fournie par Render

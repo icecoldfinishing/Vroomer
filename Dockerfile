@@ -1,27 +1,20 @@
-# -----------------------------
-# Étape 1 : Build Maven
-# -----------------------------
+# Multi-stage build: build WAR, then run on Tomcat
+
+# Stage 1: build all modules and produce WAR
 FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /build
-
-# Copier tout le repo (project + parent POM si tu en as)
+# Copy full repo (root pom + modules)
 COPY . .
+# Build via root aggregator to compile framework + project
+RUN mvn -q -DskipTests -f ./pom.xml clean package
 
-# Build tout le projet multi-module
-RUN mvn clean package -DskipTests
+# Stage 2: run WAR on Tomcat 10 (Jakarta Servlet 6, Java 17)
+FROM tomcat:10.1-jdk17
+# Deploy the generated WAR as ROOT
+COPY project/target/test-project.war /usr/local/tomcat/webapps/ROOT.war
 
-# -----------------------------
-# Étape 2 : Image finale Java
-# -----------------------------
-FROM eclipse-temurin:17-jdk-alpine
-WORKDIR /app
-
-# Copier le jar généré du module project
-COPY --from=build /build/project/target/*.jar app.jar
-
-# Exposer le port Render (il fournit $PORT)
-ENV PORT=8080
-EXPOSE $PORT
-
-# Lancer l'app avec le port dynamique
-CMD ["sh", "-c", "java -Dserver.port=$PORT -jar app.jar"]
+# Change Tomcat port to 8888
+ENV CATALINA_OPTS="-Dserver.port=8888"
+RUN sed -i 's/port="8080"/port="8888"/g' /usr/local/tomcat/conf/server.xml
+EXPOSE 8888
+# Tomcat runs on 8888; Render maps $PORT automatically in Docker runtime

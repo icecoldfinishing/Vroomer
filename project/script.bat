@@ -61,6 +61,11 @@ if not exist "%DEPLOY_DIR%" (
     mkdir "%DEPLOY_DIR%"
 )
 
+:: Copier les resources (application.properties) vers WEB-INF/classes
+if exist "%TEST_PROJECT_DIR%\src\main\resources\application.properties" (
+    copy /Y "%TEST_PROJECT_DIR%\src\main\resources\application.properties" "%TEST_CLASSES_DIR%\application.properties" > nul
+)
+
 echo Nettoyage termine.
 
 :: ============================================================================

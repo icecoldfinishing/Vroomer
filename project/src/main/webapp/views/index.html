@@ -209,7 +209,7 @@
         </div>
     </section>
 
-    <!-- Services Section -->
+    <!-- Services Section - Données dynamiques -->
     <section class="ftco-section">
         <div class="container">
             <div class="row justify-content-center mb-5">
@@ -218,7 +218,8 @@
                     <h2 class="mb-3">Our Latest Services</h2>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" id="services-container">
+                <!-- Services chargés dynamiquement -->
                 <div class="col-md-3">
                     <div class="services services-2 w-100 text-center">
                         <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-wedding-car"></span></div>
@@ -320,7 +321,7 @@
         </div>
     </section>
 
-    <!-- Blog Section -->
+    <!-- Blog Section - Données dynamiques -->
     <section class="ftco-section">
         <div class="container">
             <div class="row justify-content-center mb-5">
@@ -329,7 +330,8 @@
                     <h2>Recent Blog</h2>
                 </div>
             </div>
-            <div class="row d-flex">
+            <div class="row d-flex" id="blogs-container">
+                <!-- Blogs chargés dynamiquement -->
                 <div class="col-md-4 d-flex ftco-animate">
                     <div class="blog-entry justify-content-end">
                         <a href="/project/blog-single" class="block-20" style="background-image: url('/project/images/image_1.jpg');"></a>
@@ -376,11 +378,12 @@
         </div>
     </section>
 
-    <!-- Counter Section -->
+    <!-- Counter Section - Données dynamiques -->
     <section class="ftco-counter ftco-section img bg-light" id="section-counter">
         <div class="overlay"></div>
         <div class="container">
-            <div class="row">
+            <div class="row" id="stats-container">
+                <!-- Statistiques chargées dynamiquement -->
                 <div class="col-md-6 col-lg-3 justify-content-center counter-wrap ftco-animate">
                     <div class="block-18">
                         <div class="text text-border d-flex align-items-center">
@@ -439,5 +442,6 @@
     <script src="/project/js/google-map.js"></script>
     <script src="/project/js/main.js"></script>
     <script src="/project/js/components.js"></script>
+    <script src="/project/js/data-loader.js"></script>
 </body>
 </html>

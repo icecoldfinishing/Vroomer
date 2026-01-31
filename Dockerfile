@@ -3,8 +3,10 @@
 # Stage 1: build all modules and produce Spring Boot jar
 FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /build
+
 # Copy full repo (root pom + modules)
 COPY . .
+
 # Build via root aggregator to compile framework + project
 RUN mvn -q -DskipTests -f ./pom.xml clean package
 

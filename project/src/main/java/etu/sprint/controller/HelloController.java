@@ -9,18 +9,17 @@ import etu.sprint.model.ModelView;
 public class HelloController {
 
     @GetMapping("/")
-    public ModelView hello() {
+    public ModelView home() {
         ModelView mv = new ModelView();
-        mv.addItem("message", "Hello World!");
-        mv.setView("/views/hello.jsp");
+        mv.setView("/views/index.html");
         return mv;
     }
 
-    @GetMapping("/about")
-    public ModelView about() {
+    @GetMapping("/hello")
+    public ModelView hello() {
         ModelView mv = new ModelView();
-        mv.addItem("message", "About page");
-        mv.setView("/views/about.jsp");
+        mv.addItem("message", "Hello World!");
+        mv.setView("/views/hello.html");
         return mv;
     }
 }

@@ -33,8 +33,16 @@ L'application doit démarrer sur http://localhost:8088
 3. Configurer :
    - **Name** : `vroomer-db`
    - **Database** : `vroomer_db`
+   - **PostgreSQL Version** : 16 ou 17 (selon disponibilité)
    - **Plan** : Free
-4. Copier les credentials (Host, Port, Database, Username, Password)
+4. Après création, aller dans **Info** et copier :
+   - **Hostname** (ex: `dpg-xxxxx.oregon-postgres.render.com`)
+   - **Port** : `5432`
+   - **Database** : `vroomer_db`
+   - **Username** : *(généré par Render, ex: `vroomer_db_user`)*
+   - **Password** : *(généré par Render)*
+
+> ⚠️ **Note** : Render génère automatiquement le username et password. Ce n'est PAS `postgres/postgres` comme en local !
 
 ## 4. Créer le Web Service sur Render
 

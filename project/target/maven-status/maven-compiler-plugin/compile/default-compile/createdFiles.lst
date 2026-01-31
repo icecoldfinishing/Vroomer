@@ -1,3 +1,4 @@
+etu\sprint\config\WebMvcConfig.class
 etu\sprint\entity\Service.class
 etu\sprint\service\BlogService.class
 etu\sprint\entity\Temoignage.class
@@ -7,6 +8,7 @@ etu\sprint\service\ServiceService.class
 etu\sprint\repository\MarqueRepository.class
 etu\sprint\VroomerApplication.class
 etu\sprint\service\TemoignageService.class
+etu\sprint\config\ModelViewReturnValueHandler.class
 etu\sprint\entity\Reservation.class
 etu\sprint\service\VoitureService.class
 etu\sprint\entity\Categorie.class

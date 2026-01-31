@@ -1,58 +1,132 @@
-# Déploiement du projet sur Render
-mvn -q -DskipTests clean package
+# Déploiement du projet Vroomer sur Render (Free)
 
-Ce guide explique comment déployer ce projet Java (WAR) sur [Render](https://render.com), un service cloud PaaS qui supporte le déploiement d'applications web Java via Tomcat.
+Ce guide explique comment déployer ce projet Spring Boot sur [Render](https://render.com) gratuitement.
+
+## Architecture du projet
+
+- **Framework maison** (`framework/`) : ModelView, JsonResponse
+- **Application Spring Boot** (`project/`) : JAR exécutable avec Tomcat embarqué
+- **Base de données** : PostgreSQL (Render Managed PostgreSQL)
 
 ## 1. Prérequis
+
 - Un compte Render (https://render.com)
-- Un repository GitHub contenant ce projet (ou fork)
-- Le projet doit générer un fichier `.war` via Maven (`mvn package`)
-- Le projet utilise Java 17 et Jakarta Servlet 6 (Tomcat 10+)
+- Un repository GitHub contenant ce projet
+- Le projet génère un JAR Spring Boot via Maven
 
 ## 2. Préparer le projet
-- Vérifiez que le build Maven fonctionne localement :
-  ```sh
-  cd project
-  mvn clean package
-  ```
-  Le fichier `target/test-project.war` doit être généré.
-- Assurez-vous que le dossier `src/main/webapp/WEB-INF/lib/` contient bien `framework.jar` (généré par le script du framework).
- - Packaging du framework:
-   - Avec la configuration actuelle Maven, les classes du framework sont directement compilées et incluses dans `WEB-INF/classes` (pas de `framework.jar` requis).
-   - Si vous préférez le JAR (via `framework/script.bat`), placez le fichier généré dans `src/main/webapp/WEB-INF/lib/` avant le packaging.
 
-## 3. Créer un service Web sur Render
-Option (100% gratuite) — Web Service Native
-1. Placez deux scripts à la racine du repo:
-  - `render-build.sh` (build Maven)
-  - `render-start.sh` (démarrage Tomcat sur `$PORT`)
-2. Créez un nouveau "Web Service" sur Render à partir du repo GitHub.
-3. Configurez:
-  - **Root Directory**: `.` (racine du repo)
-  - **Build Command**: `./render-build.sh`
-  - **Start Command**: `./render-start.sh`
-  - **Environment**: Java (17)
-  - **Environment Variables** (si DB): `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`
-4. Déployez. Render exécutera le build, téléchargera Tomcat, et lancera l'app sur le port public.
+Vérifiez que le build Maven fonctionne localement :
 
-Note: Nous n'utilisons pas Docker ni render.yaml pour éviter le compte payant.
+```bash
+cd D:\L3\GProjet\Vroomer
+mvn clean install -DskipTests
+java -jar project/target/vroomer-1.0.0.jar
+```
 
-  ## 4.1. Tests locaux (optionnels)
-  Vous pouvez toujours tester avec un Tomcat local en déposant `project/target/test-project.war` dans `webapps`.
+L'application doit démarrer sur http://localhost:8088
 
-## 5. Limitations et conseils
-- Render n'exécute pas les scripts `.bat` Windows. Tout build doit être automatisé via Maven.
-- Les dépendances du framework doivent être dans `WEB-INF/lib` ou packagées dans le WAR.
-- Les fichiers de config (ex: `auth.properties`) doivent être inclus dans le WAR.
-- Les accès à la base de données doivent utiliser des variables d'environnement Render.
+## 3. Créer une base PostgreSQL sur Render
 
-## 6. Liens utiles
+1. Aller sur https://dashboard.render.com
+2. Cliquer **New** → **PostgreSQL**
+3. Configurer :
+   - **Name** : `vroomer-db`
+   - **Database** : `vroomer_db`
+   - **Plan** : Free
+4. Copier les credentials (Host, Port, Database, Username, Password)
+
+## 4. Créer le Web Service sur Render
+
+1. Cliquer **New** → **Web Service**
+2. Connecter votre repository GitHub
+3. Configurer :
+
+| Paramètre | Valeur |
+|-----------|--------|
+| **Name** | `vroomer` |
+| **Root Directory** | `.` (racine) |
+| **Environment** | `Java` |
+| **Build Command** | `./render-build.sh` |
+| **Start Command** | `./render-start.sh` |
+| **Plan** | Free |
+
+## 5. Variables d'environnement
+
+Ajouter ces variables dans **Environment** :
+
+| Variable | Valeur |
+|----------|--------|
+| `PGHOST` | *(depuis votre DB Render)* |
+| `PGPORT` | `5432` |
+| `PGDATABASE` | `vroomer_db` |
+| `PGUSER` | *(depuis votre DB Render)* |
+| `PGPASSWORD` | *(depuis votre DB Render)* |
+
+> L'application utilise automatiquement ces variables grâce à `application.properties` :
+> ```properties
+> spring.datasource.url=jdbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:vroomer_db}
+> spring.datasource.username=${PGUSER:postgres}
+> spring.datasource.password=${PGPASSWORD:postgres}
+> server.port=${PORT:8088}
+> ```
+
+## 6. Initialiser la base de données
+
+Après déploiement, exécuter le script SQL pour créer les tables :
+
+1. Aller dans votre PostgreSQL sur Render
+2. Cliquer **PSQL** ou utiliser un client externe
+3. Exécuter le contenu de `bd/init_tables.sql`
+
+## 7. Déployer
+
+Cliquer **Deploy** sur Render. Le build va :
+
+1. Installer Maven (si nécessaire)
+2. Compiler le framework + project (`mvn install`)
+3. Générer `project/target/vroomer-1.0.0.jar`
+4. Lancer avec `java -jar` sur le port assigné par Render
+
+## Scripts de déploiement
+
+### render-build.sh
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+# Installe Maven si absent, puis build le projet
+mvn -q -DskipTests -f ./pom.xml clean install
+```
+
+### render-start.sh
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+# Lance le JAR Spring Boot (Tomcat embarqué)
+exec java -jar project/target/vroomer-1.0.0.jar
+```
+
+## Avantages de Spring Boot vs WAR/Tomcat
+
+| Avant (WAR) | Maintenant (Spring Boot JAR) |
+|-------------|------------------------------|
+| Télécharger Tomcat | Tomcat embarqué dans le JAR |
+| Configurer server.xml | Configuration via properties |
+| Déployer WAR manuellement | `java -jar` suffit |
+| ~200MB download | Rien à télécharger |
+
+## Dépannage
+
+### Build échoue "Could not find artifact framework"
+Le script `render-build.sh` utilise `mvn install` qui compile et installe le framework avant le project.
+
+### L'application ne démarre pas
+Vérifier les logs Render pour les erreurs de connexion DB. Les variables `PG*` doivent être correctement configurées.
+
+### Port incorrect
+Render injecte la variable `PORT`. L'application l'utilise via `server.port=${PORT:8088}`.
+
+## Liens utiles
+
 - [Render Java Docs](https://render.com/docs/deploy-java)
-- [Render Docker Docs](https://render.com/docs/deploy-docker)
-
----
-
-**Résumé** :
-- Privilégiez un build Maven standard (`mvn package`)
- - Déploiement gratuit recommandé: Web Service Render + scripts bash
-- Vérifiez l'URL publique fournie par Render
+- [Spring Boot on Render](https://render.com/docs/deploy-spring-boot)

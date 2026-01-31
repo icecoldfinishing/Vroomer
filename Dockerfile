@@ -1,6 +1,6 @@
-# Multi-stage build: build WAR, then run on Tomcat
+# Multi-stage build: build Spring Boot jar, then run on JRE
 
-# Stage 1: build all modules and produce WAR
+# Stage 1: build all modules and produce Spring Boot jar
 FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /build
 # Copy full repo (root pom + modules)
@@ -8,13 +8,14 @@ COPY . .
 # Build via root aggregator to compile framework + project
 RUN mvn -q -DskipTests -f ./pom.xml clean package
 
-# Stage 2: run WAR on Tomcat 10 (Jakarta Servlet 6, Java 17)
-FROM tomcat:10.1-jdk17
-# Deploy the generated WAR as ROOT
-COPY project/target/test-project.war /usr/local/tomcat/webapps/ROOT.war
+# Stage 2: run Spring Boot jar on a slim JRE
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+# Copy the built jar from the project module (version-agnostic)
+COPY --from=build /build/project/target/*.jar /app/app.jar
 
-# Change Tomcat port to 8888
-ENV CATALINA_OPTS="-Dserver.port=8888"
-RUN sed -i 's/port="8080"/port="8888"/g' /usr/local/tomcat/conf/server.xml
-EXPOSE 8888
-# Tomcat runs on 8888; Render maps $PORT automatically in Docker runtime
+# Expose the same port as configured (defaults to 8088; overridable via env)
+EXPOSE 8088
+
+# Run the Spring Boot application
+ENTRYPOINT ["java","-jar","/app/app.jar"]

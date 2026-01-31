@@ -1,5 +1,6 @@
 D:\L3\GProjet\Vroomer\project\src\main\java\etu\sprint\controller\PageController.java
 D:\L3\GProjet\Vroomer\project\src\main\java\etu\sprint\service\ServiceService.java
+D:\L3\GProjet\Vroomer\project\src\main\java\etu\sprint\config\ModelViewReturnValueHandler.java
 D:\L3\GProjet\Vroomer\project\src\main\java\etu\sprint\entity\Categorie.java
 D:\L3\GProjet\Vroomer\project\src\main\java\etu\sprint\repository\CategorieRepository.java
 D:\L3\GProjet\Vroomer\project\src\main\java\etu\sprint\entity\Statistique.java
@@ -15,6 +16,7 @@ D:\L3\GProjet\Vroomer\project\src\main\java\etu\sprint\service\BlogService.java
 D:\L3\GProjet\Vroomer\project\src\main\java\etu\sprint\entity\Temoignage.java
 D:\L3\GProjet\Vroomer\project\src\main\java\etu\sprint\repository\StatistiqueRepository.java
 D:\L3\GProjet\Vroomer\project\src\main\java\etu\sprint\entity\Blog.java
+D:\L3\GProjet\Vroomer\project\src\main\java\etu\sprint\config\WebMvcConfig.java
 D:\L3\GProjet\Vroomer\project\src\main\java\etu\sprint\service\VoitureService.java
 D:\L3\GProjet\Vroomer\project\src\main\java\etu\sprint\repository\BlogRepository.java
 D:\L3\GProjet\Vroomer\project\src\main\java\etu\sprint\repository\MarqueRepository.java

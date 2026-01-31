@@ -1,58 +1,84 @@
 package etu.sprint.controller;
 
+import etu.sprint.model.ModelView;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+/**
+ * Contrôleur de pages utilisant ModelView du framework maison.
+ * Les méthodes retournent un ModelView qui est converti en redirection
+ * vers la vue HTML correspondante.
+ */
 @Controller
 public class PageController {
 
     @GetMapping("/")
-    public String index() {
-        return "redirect:/index.html";
+    public ModelView index() {
+        ModelView mv = new ModelView("index.html");
+        mv.addObject("title", "Vroomer - Location de voitures");
+        return mv;
     }
 
     @GetMapping("/index")
-    public String home() {
-        return "redirect:/index.html";
+    public ModelView home() {
+        ModelView mv = new ModelView("index.html");
+        mv.addObject("title", "Vroomer - Accueil");
+        return mv;
     }
 
     @GetMapping("/about")
-    public String about() {
-        return "redirect:/about.html";
+    public ModelView about() {
+        ModelView mv = new ModelView("about.html");
+        mv.addObject("title", "À propos de Vroomer");
+        return mv;
     }
 
     @GetMapping("/services")
-    public String services() {
-        return "redirect:/services.html";
+    public ModelView services() {
+        ModelView mv = new ModelView("services.html");
+        mv.addObject("title", "Nos services");
+        return mv;
     }
 
     @GetMapping("/pricing")
-    public String pricing() {
-        return "redirect:/pricing.html";
+    public ModelView pricing() {
+        ModelView mv = new ModelView("pricing.html");
+        mv.addObject("title", "Tarifs");
+        return mv;
     }
 
     @GetMapping("/car")
-    public String cars() {
-        return "redirect:/car.html";
+    public ModelView cars() {
+        ModelView mv = new ModelView("car.html");
+        mv.addObject("title", "Nos voitures");
+        return mv;
     }
 
     @GetMapping("/car-single")
-    public String carSingle() {
-        return "redirect:/car-single.html";
+    public ModelView carSingle() {
+        ModelView mv = new ModelView("car-single.html");
+        mv.addObject("title", "Détail voiture");
+        return mv;
     }
 
     @GetMapping("/blog")
-    public String blog() {
-        return "redirect:/blog.html";
+    public ModelView blog() {
+        ModelView mv = new ModelView("blog.html");
+        mv.addObject("title", "Blog");
+        return mv;
     }
 
     @GetMapping("/blog-single")
-    public String blogSingle() {
-        return "redirect:/blog-single.html";
+    public ModelView blogSingle() {
+        ModelView mv = new ModelView("blog-single.html");
+        mv.addObject("title", "Article");
+        return mv;
     }
 
     @GetMapping("/contact")
-    public String contact() {
-        return "redirect:/contact.html";
+    public ModelView contact() {
+        ModelView mv = new ModelView("contact.html");
+        mv.addObject("title", "Contact");
+        return mv;
     }
 }
